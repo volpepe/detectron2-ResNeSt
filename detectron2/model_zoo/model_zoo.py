@@ -14,6 +14,7 @@ class _ModelZooUrls(object):
     """
 
     S3_PREFIX = "https://dl.fbaipublicfiles.com/detectron2/"
+    RESNEST_PREFIX = "https://s3.us-west-1.wasabisys.com/resnest/detectron/"
 
     # format: {config_path.yaml} -> model_id/model_final_{commit}.pkl
     CONFIG_PATH_TO_URL_SUFFIX = {
@@ -77,10 +78,24 @@ class _ModelZooUrls(object):
         "Detectron1-Comparisons/faster_rcnn_R_50_FPN_noaug_1x.yaml": "137781054/model_final_7ab50c.pkl",  # noqa
         "Detectron1-Comparisons/mask_rcnn_R_50_FPN_noaug_1x.yaml": "137781281/model_final_62ca52.pkl",  # noqa
         "Detectron1-Comparisons/keypoint_rcnn_R_50_FPN_1x.yaml": "137781195/model_final_cce136.pkl",
+        # ResNeSt Models
+        "COCO-Detection/faster_cascade_rcnn_ResNeSt_101_FPN_syncbn_range-scale_1x.yaml": "faster_cascade_rcnn_ResNeSt_101_FPN_syncbn_range-scale_1x-3627ef78.pth",
+        "COCO-Detection/faster_cascade_rcnn_ResNeSt_200_FPN_syncbn_range-scale_1x.yaml": "faster_cascade_rcnn_ResNeSt_200_FPN_syncbn_range-scale_1x-1be2a87e.pth",
+        "COCO-Detection/faster_cascade_rcnn_ResNeSt_50_FPN_syncbn_range-scale-1x.yaml": "faster_cascade_rcnn_ResNeSt_50_FPN_syncbn_range-scale-1x-e9955232.pth",
+        "COCO-Detection/faster_rcnn_ResNeSt_101_FPN_syncbn_range-scale_1x.yaml": "faster_rcnn_ResNeSt_101_FPN_syncbn_range-scale_1x-d8f284b6.pth",
+        "COCO-Detection/faster_rcnn_ResNeSt_50_FPN_syncbn_range-scale_1x.yaml": "faster_rcnn_ResNeSt_50_FPN_syncbn_range-scale_1x-ad123c0b.pth",
+        "COCO-Detection/faster_rcnn_ResNeSt_50_FPN_dcn_syncbn_range-scale_1x.yaml": "faster_rcnn_ResNeSt_50_FPN_dcn_syncbn_range-scale_1x.pth",
+        "COCO-InstanceSegmentation/mask_cascade_rcnn_ResNeSt_101_FPN_syncBN_1x.yaml": "mask_cascade_rcnn_ResNeSt_101_FPN_syncBN_1x-62448b9c.pth",
+        "COCO-InstanceSegmentation/mask_cascade_rcnn_ResNeSt_200_FPN_dcn_syncBN_all_tricks_3x.yaml":"mask_cascade_rcnn_ResNeSt_200_FPN_dcn_syncBN_all_tricks_3x-e1901134.pth",
+        "COCO-InstanceSegmentation/mask_cascade_rcnn_ResNeSt_200_FPN_syncBN_all_tricks_3x.yaml":"mask_cascade_rcnn_ResNeSt_200_FPN_syncBN_all_tricks_3x.pth",
+        "COCO-InstanceSegmentation/mask_cascade_rcnn_ResNeSt_50_FPN_syncBN_1x.yaml":"mask_cascade_rcnn_ResNeSt_50_FPN_syncBN_1x-c58bd325.pth",
+        "COCO-InstanceSegmentation/mask_rcnn_ResNeSt_101_FPN_syncBN_1x.yaml":"mask_rcnn_ResNeSt_101_FPN_syncBN_1x-528502c6.pth",
+        "COCO-InstanceSegmentation/mask_rcnn_ResNeSt_50_FPN_syncBN_1x.yaml":"mask_rcnn_ResNeSt_50_FPN_syncBN_1x-f442d863.pth",
+        "COCO-PanopticSegmentation/panoptic_ResNeSt_200_FPN_syncBN_tricks_3x.yaml":"panoptic_ResNeSt_200_FPN_syncBN_tricks_3x-43f8b731.pth"
     }
 
 
-def get_checkpoint_url(config_path):
+def get_checkpoint_url(config_path, resnest=False):
     """
     Returns the URL to the model trained using the given config
 
@@ -94,7 +109,8 @@ def get_checkpoint_url(config_path):
     name = config_path.replace(".yaml", "")
     if config_path in _ModelZooUrls.CONFIG_PATH_TO_URL_SUFFIX:
         suffix = _ModelZooUrls.CONFIG_PATH_TO_URL_SUFFIX[config_path]
-        return _ModelZooUrls.S3_PREFIX + name + "/" + suffix
+        prefix = _ModelZooUrls.S3_PREFIX if not resnest else _ModelZooUrls.RESNEST_PREFIX
+        return ''.join([prefix, name, '/', suffix]) if not resnest else ''.join([prefix, suffix])
     raise RuntimeError("{} not available in Model Zoo!".format(name))
 
 
